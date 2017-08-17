@@ -15,7 +15,7 @@ if (!!process.env.PORT) {
     var ip138Token = process.env.ip138Token; 
     var apiKeyForMsg = process.env.apiKeyForMsg;
     var mobilesToNotify = `${mobilesToNotify1},${mobilesToNotify2}`;
-    var emailsToNotify = [process.env.emailsToNotify1, process.env.emailsToNotify2];
+    var emailsToNotify = Array(process.env.emailsToNotify1, process.env.emailsToNotify2);
 
 } else {
     var config = require('./config.js')
