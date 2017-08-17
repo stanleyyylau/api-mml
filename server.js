@@ -14,7 +14,7 @@ if (!!process.env.PORT) {
     var sendGridKey = process.env.sendGridApiKey;
     var ip138Token = process.env.ip138Token; 
     var apiKeyForMsg = process.env.apiKeyForMsg;
-    var mobilesToNotify = `${mobilesToNotify1},${mobilesToNotify2}`;
+    var mobilesToNotify = `${process.env.mobilesToNotify1},${process.env.mobilesToNotify2}`;
     var emailsToNotify = Array(process.env.emailsToNotify1, process.env.emailsToNotify2);
 
 } else {
