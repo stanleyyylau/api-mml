@@ -13,6 +13,9 @@ if (!!process.env.PORT) {
     var mailchimpEndpoint = process.env.mailchimpEndpoint;
     var sendGridKey = process.env.sendGridApiKey;
     var ip138Token = process.env.ip138Token; 
+    var apiKeyForMsg = process.env.apiKeyForMsg;
+    var mobilesToNotify = process.env.mobilesToNotify;
+    var emailsToNotify = process.env.emailsToNotify;
 
 } else {
     var config = require('./config.js')
@@ -21,13 +24,16 @@ if (!!process.env.PORT) {
     var mailchimpEndpoint = config.mailchimpEndpoint;
     var sendGridKey = config.sendGridApiKey;
     var ip138Token = config.ip138Token;
+    var apiKeyForMsg = config.apiKeyForMsg;
+    var mobilesToNotify = config.mobilesToNotify;
+    var emailsToNotify = config.emailsToNotify;
 }
 
 
 var Mailchimp = require('mailchimp-api-v3')
 var mailchimp = new Mailchimp(mailchimpAPI);
 
-var clientIp;
+var clientIp; // clientIp is accessible inside incoming http stream
 
 // inside middleware handler
 const ipMiddleware = function(req, res, next) {
@@ -53,9 +59,7 @@ const ipMiddleware = function(req, res, next) {
               }
           }
       );
-    
 };
-
 
 require('./keep-alive.js');
 
@@ -68,11 +72,8 @@ var port = process.env.PORT || 5000;
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
-app.get('/', function(req, res){
-    res.send(`hello there ${clientIp}`);
-})
 
-
+/*
 app.get('/send', function(req, res) {
     var helper = require('sendgrid').mail;
     var fromEmail = new helper.Email('api@mmldigi.com');
@@ -96,11 +97,11 @@ app.get('/send', function(req, res) {
         console.log(response.body);
         console.log(response.headers);
     });
-
-
 })
+*/
 
 
+/*
 app.get('/subscribe', function(req, res) {
 
     mailchimp.post(mailchimpEndpoint, {
@@ -123,6 +124,106 @@ app.get('/subscribe', function(req, res) {
       })
 
 
+})
+*/
+function sendMsgForNewLead () {
+    request.post(
+        'https://sms.yunpian.com/v2/sms/batch_send.json',
+        { form: {
+          apikey: apiKeyForMsg,
+          mobile: mobilesToNotify,
+          text: '【慢慢来】您的网站收到一条新的留言'
+        } },
+        function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                console.log(body)
+            }
+        }
+    )
+}
+
+function addNewContactToMailChimp (email, name, wechat) {
+    mailchimp.post(mailchimpEndpoint, {
+        'status' : 'subscribed',
+        'members': [{
+            'email_address': email,
+            "status": "subscribed",
+            'merge_fields': {
+                'NAME': name,
+                'WECHAT': wechat
+            }
+        }]
+      })
+      .then(function(results) {
+        console.log(results)
+      })
+      .catch(function (err) {
+        console.log(err)
+      })    
+}
+
+app.post('/seotool', function(req, res) {
+    var email = req.body.email;
+    var name = req.body.name;
+    var wechat = req.body.wechat;
+    var msg = req.body.msg;
+    var domains = req.body.domains  // An array of strings, less than three
+    var referer = req.headers.referer
+    var hostName = req.headers.host
+    // API usage limitation based on domain or host starts from here
+
+    // Send msg no matter what
+    sendMsgForNewLead();
+
+    // First we will add user to mailchip subscriber list
+    addNewContactToMailChimp(email, name, wechat);
+
+    // Than we send that email out
+    var helper = require('sendgrid').mail;
+    var fromEmail = new helper.Email('api@mmldigi.com', 'MML SEO Audit');
+    var toEmail = new helper.Personalization();
+    // Config recipents here
+    toEmail.addTo(new helper.Email(emailsToNotify[0]))
+    toEmail.addTo(new helper.Email(emailsToNotify[1]))
+    var subject = 'Cheers!!! One New Lead For SEO Audit Marketing Campaign';
+    var domainsHtml = '';
+    domains.forEach(function(value, index) {
+        domainsHtml += `<div>${value}</div>`
+    }); // To to, output html here
+    var content = new helper.Content('text/html', `<h2>Client Info As Below</h2><div>Name: ${name}</div><div>Email: ${email}</div><div>Wechat: ${wechat}</div><div>Source: ${clientIp}</div><h2>Domain/Domains to Audit:</h2>${domainsHtml}`);
+
+    var mail = new helper.Mail()
+    mail.setFrom(fromEmail)
+    mail.setSubject(subject)
+    mail.addContent(content)
+    mail.addPersonalization(toEmail)
+
+    
+    var sg = require('sendgrid')(sendGridKey);
+    var request = sg.emptyRequest({
+      method: 'POST',
+      path: '/v3/mail/send',
+      body: mail.toJSON()
+    });
+    
+    sg.API(request, function (error, response) {
+        if (error) {
+          console.log('Error response received');
+        }
+        console.log(response.statusCode);
+        console.log(response.body);
+        console.log(response.headers);
+        res.json({
+            responseCode: response.statusCode,
+            referer: referer,
+            hostName: hostName
+        })
+    });
+
+})
+
+app.get('/', function(req, res){
+    res.send(`hello there ${clientIp}`);
 })
 
 app.listen(port, function () {
