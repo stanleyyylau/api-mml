@@ -7,18 +7,20 @@ var requestIp = require('request-ip');
 var crypto = require('crypto');
 var helper = require('sendgrid').mail;
 
-if (!process.env.PORT) {
+if (!!process.env.PORT) {
+
+    var mailchimpAPI = process.env.mailchimpAPI;
+    var mailchimpEndpoint = process.env.mailchimpEndpoint;
+    var sendGridKey = process.env.sendGridApiKey;
+    var ip138Token = process.env.ip138Token; 
+      
+} else {
     var config = require('./config.js')
     
     var mailchimpAPI = config.mailchimpAPI;
     var mailchimpEndpoint = config.mailchimpEndpoint;
     var sendGridKey = config.sendGridApiKey;
     var ip138Token = config.ip138Token;
-} else {
-    var mailchimpAPI = process.env.mailchimpAPI;
-    var mailchimpEndpoint = process.env.mailchimpEndpoint;
-    var sendGridKey = process.env.sendGridApiKey;
-    var ip138Token = process.env.ip138Token;
 }
 
 
