@@ -13,7 +13,7 @@ if (!!process.env.PORT) {
     var mailchimpEndpoint = process.env.mailchimpEndpoint;
     var sendGridKey = process.env.sendGridApiKey;
     var ip138Token = process.env.ip138Token; 
-      
+
 } else {
     var config = require('./config.js')
     
@@ -74,15 +74,15 @@ app.get('/', function(req, res){
 
 
 app.get('/send', function(req, res) {
-    let helper = require('sendgrid').mail;
-    let fromEmail = new helper.Email('api@mmldigi.com');
-    let toEmail = new helper.Email('stanleyyylau@gmail.com, stanley@mmldigi.com');
-    let subject = 'Sending with SendGrid is Fun';
-    let content = new helper.Content('text/plain', 'and easy to do anywhere, even with Node.js');
-    let mail = new helper.Mail(fromEmail, subject, toEmail, content);
+    var helper = require('sendgrid').mail;
+    var fromEmail = new helper.Email('api@mmldigi.com');
+    var toEmail = new helper.Email('stanleyyylau@gmail.com, stanley@mmldigi.com');
+    var subject = 'Sending with SendGrid is Fun';
+    var content = new helper.Content('text/plain', 'and easy to do anywhere, even with Node.js');
+    var mail = new helper.Mail(fromEmail, subject, toEmail, content);
     
-    let sg = require('sendgrid')(sendGridKey);
-    let request = sg.emptyRequest({
+    var sg = require('sendgrid')(sendGridKey);
+    var request = sg.emptyRequest({
       method: 'POST',
       path: '/v3/mail/send',
       body: mail.toJSON()
