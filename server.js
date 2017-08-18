@@ -116,10 +116,10 @@ app.post('/seotool', function(req, res) {
     var domains = req.body.domains  // An array of strings, less than three
     var referer = req.headers.referer
     var hostName = req.headers.host
-    var subscribe = req.body.wechat
+    var subscribe = req.body.subscribe
     // API usage limitation based on domain or host starts from here
     if (referer != 'https://www.mmldigi.com/free-seo-audit') {
-        res.json({
+        return res.json({
             responseCode: 403,
             msg: 'You are not allow to access'
         })
