@@ -72,60 +72,6 @@ var port = process.env.PORT || 5000;
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
-
-/*
-app.get('/send', function(req, res) {
-    var helper = require('sendgrid').mail;
-    var fromEmail = new helper.Email('api@mmldigi.com');
-    var toEmail = new helper.Email('stanleyyylau@gmail.com, stanley@mmldigi.com');
-    var subject = 'Sending with SendGrid is Fun';
-    var content = new helper.Content('text/plain', 'and easy to do anywhere, even with Node.js');
-    var mail = new helper.Mail(fromEmail, subject, toEmail, content);
-    
-    var sg = require('sendgrid')(sendGridKey);
-    var request = sg.emptyRequest({
-      method: 'POST',
-      path: '/v3/mail/send',
-      body: mail.toJSON()
-    });
-    
-    sg.API(request, function (error, response) {
-        if (error) {
-          console.log('Error response received');
-        }
-        console.log(response.statusCode);
-        console.log(response.body);
-        console.log(response.headers);
-    });
-})
-*/
-
-
-/*
-app.get('/subscribe', function(req, res) {
-
-    mailchimp.post(mailchimpEndpoint, {
-        // 'email_address' : 'stanley@mmldigi.com',
-        'status' : 'subscribed',
-        'members': [{
-            'email_address': 'stanlfrey@mmldigital.com',
-            "status": "subscribed",
-            'merge_fields': {
-                'NAME': 'Sffftan',
-                'WECHAT': 'Sfffftan'
-            }
-        }]
-      })
-      .then(function(results) {
-        console.log(results)
-      })
-      .catch(function (err) {
-        console.log(err)
-      })
-
-
-})
-*/
 function sendMsgForNewLead () {
     request.post(
         'https://sms.yunpian.com/v2/sms/batch_send.json',
@@ -171,6 +117,12 @@ app.post('/seotool', function(req, res) {
     var referer = req.headers.referer
     var hostName = req.headers.host
     // API usage limitation based on domain or host starts from here
+    if (referer != 'https://www.mmldigi.com/free-seo-audit') {
+        res.json({
+            responseCode: 403,
+            msg: 'You are not allow to access'
+        })
+    }
 
     // Send msg no matter what
     sendMsgForNewLead();
