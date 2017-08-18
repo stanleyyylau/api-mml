@@ -118,7 +118,7 @@ app.post('/seotool', function(req, res) {
     var hostName = req.headers.host
     var subscribe = req.body.subscribe
     // API usage limitation based on domain or host starts from here
-    if (referer != 'https://www.mmldigi.com/free-seo-audit') {
+    if (referer != 'https://www.mmldigi.com/free-seo-audit.html') {
         return res.json({
             responseCode: 403,
             msg: 'You are not allow to access'
