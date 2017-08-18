@@ -14,8 +14,8 @@ if (!!process.env.PORT) {
     var sendGridKey = process.env.sendGridApiKey;
     var ip138Token = process.env.ip138Token; 
     var apiKeyForMsg = process.env.apiKeyForMsg;
-    var mobilesToNotify = `${process.env.mobilesToNotify1},${process.env.mobilesToNotify2}`;
-    var emailsToNotify = Array(process.env.emailsToNotify1, process.env.emailsToNotify2);
+    var mobilesToNotify = `${process.env.mobilesToNotify1},${process.env.mobilesToNotify2},${process.env.mobilesToNotify3}`;
+    var emailsToNotify = Array(process.env.emailsToNotify1, process.env.emailsToNotify2, process.env.emailsToNotify3);
 
 } else {
     var config = require('./config.js')
@@ -185,6 +185,7 @@ app.post('/seotool', function(req, res) {
     // Config recipents here
     toEmail.addTo(new helper.Email(emailsToNotify[0]))
     toEmail.addTo(new helper.Email(emailsToNotify[1]))
+    toEmail.addTo(new helper.Email(emailsToNotify[2]))
     var subject = 'Cheers!!! One New Lead For SEO Audit Marketing Campaign';
     var domainsHtml = '';
     domains.forEach(function(value, index) {
