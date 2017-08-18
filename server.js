@@ -116,6 +116,7 @@ app.post('/seotool', function(req, res) {
     var domains = req.body.domains  // An array of strings, less than three
     var referer = req.headers.referer
     var hostName = req.headers.host
+    var subscribe = req.body.wechat
     // API usage limitation based on domain or host starts from here
     if (referer != 'https://www.mmldigi.com/free-seo-audit') {
         res.json({
@@ -128,7 +129,9 @@ app.post('/seotool', function(req, res) {
     sendMsgForNewLead();
 
     // First we will add user to mailchip subscriber list
-    addNewContactToMailChimp(email, name, wechat);
+    if(subscribe == 'yes') {
+        addNewContactToMailChimp(email, name, wechat);
+    }
 
     // Than we send that email out
     var helper = require('sendgrid').mail;
@@ -143,7 +146,7 @@ app.post('/seotool', function(req, res) {
     domains.forEach(function(value, index) {
         domainsHtml += `<div>${value}</div>`
     }); // To to, output html here
-    var content = new helper.Content('text/html', `<h2>Client Info As Below</h2><div>Name: ${name}</div><div>Email: ${email}</div><div>Wechat: ${wechat}</div><div>Source: ${clientIp}</div><h2>Domain/Domains to Audit:</h2>${domainsHtml}`);
+    var content = new helper.Content('text/html', `<h2>Client Info As Below</h2><div>Name: ${name}</div><div>Email: ${email}</div><div>Wechat: ${wechat}</div><div>Is Subscribed: ${subscribe}</div><div>Source: ${clientIp}</div><div>Page: ${referer}</div><h2>Domain/Domains to Audit:</h2>${domainsHtml}`);
 
     var mail = new helper.Mail()
     mail.setFrom(fromEmail)
