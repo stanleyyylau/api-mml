@@ -146,7 +146,7 @@ app.post('/seotool', function(req, res) {
     domains.forEach(function(value, index) {
         domainsHtml += `<div>${value}</div>`
     }); // To to, output html here
-    var content = new helper.Content('text/html', `<h2>客户信息如下</h2><div>名字: ${name}</div><div>Email: ${email}</div><div>Wechat: ${wechat}</div><div>接受订阅: ${subscribe}</div><div>来源IP: ${clientIp}</div><div>来源页面: ${referer}</div><br><div>用户留言:<br>${msg}</div><h2>Domain/Domains to Audit:</h2>${domainsHtml}`);
+    var content = new helper.Content('text/html', `<h2>客户信息如下</h2><div>名字: ${name}</div><div>邮件: ${email}</div><div>微信: ${wechat}</div><div>接受订阅: ${subscribe}</div><div>来源IP: ${clientIp}</div><div>来源页面: ${referer}</div><br><div>用户留言:<br>${msg}</div><h2>需要评估的域名:</h2>${domainsHtml}`);
 
     var mail = new helper.Mail()
     mail.setFrom(fromEmail)
