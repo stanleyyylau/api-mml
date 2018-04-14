@@ -135,7 +135,7 @@ app.post('/email', function(req, res){
 
     // Than we send that email out
     var helper = require('sendgrid').mail;
-    var fromEmail = new helper.Email('api@mmldigi.com', 'MML SEO Audit');
+    var fromEmail = new helper.Email('api@mmldigi.com', 'MML');
     var toEmail = new helper.Personalization();
 
     receivers = receivers.split(',');
