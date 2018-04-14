@@ -165,9 +165,7 @@ app.post('/email', function(req, res){
         console.log(response.body);
         console.log(response.headers);
         res.json({
-            responseCode: response.statusCode,
-            referer: referer,
-            hostName: hostName
+            responseCode: response.statusCode
         })
     });
 })
