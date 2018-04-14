@@ -108,6 +108,26 @@ function addNewContactToMailChimp (email, name, wechat) {
       })    
 }
 
+app.post('/sms', function(req, res){
+  var smsToSend = req.body.message;
+  var numbers = req.body.numbers;
+
+  request.post(
+      'https://sms.yunpian.com/v2/sms/batch_send.json',
+      { form: {
+        apikey: apiKeyForMsg,
+        mobile: numbers,
+        text: smsToSend
+      } },
+      function (error, response, body) {
+          if (!error && response.statusCode == 200) {
+              console.log(body)
+          }
+      }
+  )
+
+})
+
 app.post('/seotool', function(req, res) {
     var email = req.body.email;
     var name = req.body.name;
