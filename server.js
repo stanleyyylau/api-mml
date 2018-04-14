@@ -143,7 +143,7 @@ app.post('/email', function(req, res){
       toEmail.addTo(new helper.Email(element))
     })
 
-    var content = new helper.Content('text/html', `${content}`);
+    content = new helper.Content('text/html', `${content}`);
 
     var mail = new helper.Mail()
     mail.setFrom(fromEmail)
