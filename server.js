@@ -128,6 +128,50 @@ app.post('/sms', function(req, res){
 
 })
 
+app.post('/email', function(req, res){
+    var receivers = req.body.receivers;
+    var subject = req.body.subject;
+    var content = req.body.content;
+
+    // Than we send that email out
+    var helper = require('sendgrid').mail;
+    var fromEmail = new helper.Email('api@mmldigi.com', 'MML SEO Audit');
+    var toEmail = new helper.Personalization();
+
+    receivers = receivers.split(',');
+    receivers.forEach(function(element){
+      toEmail.addTo(new helper.Email(element))
+    })
+
+    var mail = new helper.Mail()
+    mail.setFrom(fromEmail)
+    mail.setSubject(subject)
+    mail.addContent(content)
+    mail.addPersonalization(toEmail)
+
+    
+    var sg = require('sendgrid')(sendGridKey);
+    var request = sg.emptyRequest({
+      method: 'POST',
+      path: '/v3/mail/send',
+      body: mail.toJSON()
+    });
+    
+    sg.API(request, function (error, response) {
+        if (error) {
+          console.log('Error response received');
+        }
+        console.log(response.statusCode);
+        console.log(response.body);
+        console.log(response.headers);
+        res.json({
+            responseCode: response.statusCode,
+            referer: referer,
+            hostName: hostName
+        })
+    });
+})
+
 app.post('/seotool', function(req, res) {
     var email = req.body.email;
     var name = req.body.name;
