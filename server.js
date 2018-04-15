@@ -123,6 +123,7 @@ app.post('/sms', function(req, res){
           if (!error && response.statusCode == 200) {
               console.log(body)
           }
+          res.json(body)
       }
   )
 
